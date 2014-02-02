@@ -1,0 +1,42 @@
+-- ######## MultiKeyBinder by aVoN for MPAP. You are free to use it anywhere you want and with no credtis. It's public domain.
+local MultiKeyBinder = {};
+MultiKeyBinder.Binds = {};
+
+-- ########  Find, if someone presses a key @aVoN
+function MultiKeyBinder.Think()
+	local self = MultiKeyBinder;
+	local p = LocalPlayer();
+	for _,v in pairs(self.Binds) do
+		local pressed = true;
+		for _,key in pairs(v.Keys) do
+			if(not input.IsKeyDown(key)) then
+				pressed = false;
+				break;
+			end
+		end
+		if(pressed) then
+			if(not v.Pressed) then
+				if p:IsTyping() then
+				else
+					v.Pressed = true;
+					p:ConCommand(v.Command);
+				end
+			end
+		else
+			v.Pressed = nil;
+		end
+	end 
+end
+
+hook.Add("Think","MultiKeyBinder.Think",MultiKeyBinder.Think);
+
+-- ########  Adds a bind @aVoN
+function MultiKeyBinder.AddBind(cmd,...)
+	table.insert(MultiKeyBinder.Binds,
+		{
+			Keys = {...},
+			Command = cmd,
+		}
+	);
+end
+MultiKeyBinder.AddBind("fragradio_open",KEY_Z)
